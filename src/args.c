@@ -7,7 +7,7 @@
 const char* helpstr = 
 			"Usage :  vrasm [options] files\n"
 			"Options : \n"
-			"-i         Specifies path to input .asm file to be compiled or manualy compiled ASCII hexadecimals in .txt file.\n"
+			"-i         Specifies path to input .asm file to be compiled.\n"
 			"-o         Specifies path and extension [.bin,.coe,.mcs or .hex] of output compiled file.\n"
 			"--help     Print this help message.\n"
 			"--info     Print compiler useful informations.\n"
@@ -15,8 +15,7 @@ const char* helpstr =
 			"Examples of usage : \n"
 			"\n"
 			"vrasm -i main.asm -o out.coe\n"
-			"vrasm -i code.asm -o out.hex\n"
-			"vrasm -i opcodes.txt -o out.bin\n";
+			"vrasm -i code.asm -o out.hex\n";
 
 const char* infostr = 
 			"vrasm - is an assembler that compiles .asm files for uRego 8-bit fpga-microcontroller into .bin , .coe, .mcs  or .hex files used as fpga's block ram memory initialiazion files from multiple manufactures.\n";
@@ -24,21 +23,22 @@ const char* infostr =
 const char* argsErrorStr = 
 			"VRASM : Fatal error : Illegal arguments, see --help.\n";
 
-//extensions_t io_exts;
 
-
-int get_extensions(char* i_file_name,char* o_file_name, extensions_t* extensions)
+int get_extensions(char* i_file_path,char* o_file_path, extensions_t* extensions)
 {
-	int ext_pos,in_exts_number = 2,out_exts_number = 4;
+	int ext_pos,in_exts_number = 1,out_exts_number = 4;
 	register int i;
 	
 	char **possible_in_exts = (char **) malloc(in_exts_number*sizeof(char *));
 	char **possible_out_exts = (char **) malloc(out_exts_number*sizeof(char*));
+	
+	extensions->finput_path  = i_file_path;
+	extensions->foutput_path = o_file_path;
+	
 		
 	if(possible_in_exts == NULL || possible_out_exts == NULL){printf("Memory allocation failure.\n");return 0;}
 	
-	possible_in_exts[0] = strdup(".txt");
-	possible_in_exts[1] = strdup(".asm");
+	possible_in_exts[0] = strdup(".asm");
 
 	possible_out_exts[0] = strdup(".coe");
 	possible_out_exts[1] = strdup(".bin");
@@ -52,36 +52,36 @@ int get_extensions(char* i_file_name,char* o_file_name, extensions_t* extensions
 	
 	if(extensions->in_ext == NULL || extensions->out_ext == NULL){printf("Memory allocation failure.\n");return 0;}
 
-	if(sort_extension(possible_in_exts,extensions->in_ext,i_file_name,in_exts_number))free(possible_in_exts);
+	if(sort_extension(possible_in_exts,extensions->in_ext,i_file_path,in_exts_number))free(possible_in_exts);
 	else{free(possible_in_exts);return 0;}
 
-	if(sort_extension(possible_out_exts,extensions->out_ext,o_file_name,out_exts_number)){free(possible_out_exts); return 1;}
+	if(sort_extension(possible_out_exts,extensions->out_ext,o_file_path,out_exts_number)){free(possible_out_exts); return 1;}
 	else {free(possible_out_exts); return 0;}
 
 }
 
 
-int sort_extension(char** ext_vector,char* extension,char* file_name,int extensions_number)
+int sort_extension(char** ext_vector,char* extension,char* file_path,int extensions_number)
 {
 
 // Problem :
 
 	register int i,ext_pos=0;
 
-	for (i =0 ; i <= strlen(file_name) ; i++)
+	for (i =0 ; i <= strlen(file_path) ; i++)
 	{
-		if( file_name[i] == '.')
+		if( file_path[i] == '.')
 		{
 			ext_pos = i;
 		}
-		else if(i == strlen(file_name) -1 )
+		else if(i == strlen(file_path) -1 )
 		{
 			if ((i-ext_pos ) != 3) {printf("VRASM  :  Error : Invalid file extension format \n"); return 0;}
 		}
 		
 	}
 
-	for (i = 0; i <=3; i++) extension[i] = file_name[ext_pos+i];
+	for (i = 0; i <=3; i++) extension[i] = file_path[ext_pos+i];
 
 	for (i =0 ; i< extensions_number; i++)
 	{
