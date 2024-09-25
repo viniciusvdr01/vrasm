@@ -63,20 +63,22 @@ int get_extensions(char* i_file_name,char* o_file_name, extensions_t* extensions
 
 int sort_extension(char** ext_vector,char* extension,char* file_name,int extensions_number)
 {
-	register int i,ext_pos;
+
+// Problem :
+
+	register int i,ext_pos=0;
 
 	for (i =0 ; i <= strlen(file_name) ; i++)
 	{
 		if( file_name[i] == '.')
 		{
 			ext_pos = i;
-			break;
 		}
-		else if(i == strlen(file_name))
+		else if(i == strlen(file_name) -1 )
 		{
-			printf("VRASM  :  Error : Missing . separation between name and extension\n");	
-			return 0;
+			else if ((i-ext_pos ) != 3) {printf("VRASM  :  Error : Invalid file extension format \n"); return 0;}
 		}
+		
 	}
 
 	for (i = 0; i <=3; i++) extension[i] = file_name[ext_pos+i];
