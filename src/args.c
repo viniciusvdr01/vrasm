@@ -24,7 +24,7 @@ const char* infostr =
 const char* argsErrorStr = 
 			"VRASM : Fatal error : Illegal arguments, see --help.\n";
 
-extensions_t io_exts;
+//extensions_t io_exts;
 
 
 int get_extensions(char* i_file_name,char* o_file_name, extensions_t* extensions)
@@ -76,7 +76,7 @@ int sort_extension(char** ext_vector,char* extension,char* file_name,int extensi
 		}
 		else if(i == strlen(file_name) -1 )
 		{
-			else if ((i-ext_pos ) != 3) {printf("VRASM  :  Error : Invalid file extension format \n"); return 0;}
+			if ((i-ext_pos ) != 3) {printf("VRASM  :  Error : Invalid file extension format \n"); return 0;}
 		}
 		
 	}
@@ -100,7 +100,7 @@ int sort_extension(char** ext_vector,char* extension,char* file_name,int extensi
 }
 
 
-void parse_cmdargs(int argc, char** argv)
+void parse_cmdargs(int argc, char** argv,extensions_t* ext)
 {
 
 switch (argc)
@@ -117,7 +117,7 @@ switch (argc)
 	case 5 :
 		if(strcmp(argv[1],"-i")) puts(argsErrorStr);
 		else if( strcmp(argv[3],"-o")) puts(argsErrorStr);
-		else if(!get_extensions(argv[2],argv[4],&io_exts) ) puts(argsErrorStr);
+		else if(!get_extensions(argv[2],argv[4],ext) ) puts(argsErrorStr);
 		else{
 			printf("Starting compilation...\n");
 		}
